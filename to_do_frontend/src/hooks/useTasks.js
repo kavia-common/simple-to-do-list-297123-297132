@@ -25,8 +25,10 @@ export function useTasks(initialLoad = true) {
   // Track in-flight operations to avoid race conditions
   const inFlight = useRef(new Set());
 
+  // PUBLIC_INTERFACE
   const resetError = useCallback(() => setError(null), []);
 
+  // PUBLIC_INTERFACE
   const listTasks = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -48,16 +50,17 @@ export function useTasks(initialLoad = true) {
     }
   }, [initialLoad]);
 
-  // Optimistic create
+  // PUBLIC_INTERFACE
   const createTask = useCallback(async (payload) => {
+    const safePayload = payload || {};
     // Create a temp id for optimistic insert
     const tempId = `temp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const optimisticTask = {
       id: tempId,
-      title: payload?.title ?? "",
-      description: payload?.description ?? "",
-      status: payload?.status ?? "pending",
-      ...payload,
+      title: safePayload.title ?? "",
+      description: safePayload.description ?? "",
+      status: safePayload.status ?? "pending",
+      ...safePayload,
       _optimistic: true,
     };
 
@@ -65,7 +68,7 @@ export function useTasks(initialLoad = true) {
     setTasks((prev) => [optimisticTask, ...prev]);
 
     try {
-      const created = await tasksApi.create(payload);
+      const created = await tasksApi.create(safePayload);
       // Replace optimistic with actual record
       setTasks((prev) =>
         prev.map((t) => (t.id === tempId ? { ...created, _optimistic: false } : t))
@@ -79,7 +82,7 @@ export function useTasks(initialLoad = true) {
     }
   }, []);
 
-  // Optimistic update
+  // PUBLIC_INTERFACE
   const updateTask = useCallback(async (id, updates) => {
     if (!id) return null;
     if (inFlight.current.has(`update-${id}`)) return null;
@@ -91,7 +94,7 @@ export function useTasks(initialLoad = true) {
       const next = prev.map((t) => {
         if (t.id === id) {
           prevTask = t;
-          return { ...t, ...updates, _optimistic: true };
+          return { ...t, ...(updates || {}), _optimistic: true };
         }
         return t;
       });
@@ -99,11 +102,9 @@ export function useTasks(initialLoad = true) {
     });
 
     try {
-      const updated = await tasksApi.update(id, updates);
+      const updated = await tasksApi.update(id, updates || {});
       setTasks((prev) =>
-        prev.map((t) =>
-          t.id === id ? { ...updated, _optimistic: false } : t
-        )
+        prev.map((t) => (t.id === id ? { ...updated, _optimistic: false } : t))
       );
       return updated ?? null;
     } catch (e) {
@@ -118,7 +119,7 @@ export function useTasks(initialLoad = true) {
     }
   }, []);
 
-  // Optimistic delete
+  // PUBLIC_INTERFACE
   const deleteTask = useCallback(async (id) => {
     if (!id) return false;
     if (inFlight.current.has(`delete-${id}`)) return false;
