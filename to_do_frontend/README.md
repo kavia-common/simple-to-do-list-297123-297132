@@ -18,6 +18,22 @@ In the project directory, you can run:
 Runs the app in development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
+### Configure backend API URL
+
+The frontend reads its backend base URL from environment variables:
+
+Precedence:
+1. `REACT_APP_API_BASE` (preferred)
+2. `REACT_APP_BACKEND_URL`
+3. Fallback to same-origin "" (useful if you set up a dev proxy)
+
+Quick setup:
+- Copy `.env.example` to `.env`
+- Set `REACT_APP_API_BASE=http://localhost:4000` (or your backend URL)
+- Restart the dev server if it was already running for changes to take effect
+
+Refer to `.env.example` for additional optional variables.
+
 ### `npm test`
 
 Launches the test runner in interactive watch mode.

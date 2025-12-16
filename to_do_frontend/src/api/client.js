@@ -1,11 +1,16 @@
 const DEFAULT_TIMEOUT_MS = 10000;
 
 /**
- * Derive the API base URL from environment variables.
- * Priority:
- * - REACT_APP_API_BASE
- * - REACT_APP_BACKEND_URL
- * Falls back to same origin "" so relative URLs work in dev when proxied.
+ * Configuration:
+ * Set backend URL via environment variables in .env (CRA):
+ * - REACT_APP_API_BASE (preferred) e.g., http://localhost:4000
+ * - REACT_APP_BACKEND_URL (fallback)
+ * If neither is set, client falls back to same-origin "" so relative URLs work in dev when proxied.
+ *
+ * Quick start:
+ * 1) Copy .env.example to .env
+ * 2) Set REACT_APP_API_BASE=http://localhost:4000 (or your backend URL)
+ * 3) Restart the dev server if already running so changes take effect.
  */
 // PUBLIC_INTERFACE
 export function getApiBaseUrl() {
