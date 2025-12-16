@@ -101,7 +101,7 @@ function App() {
 
       <footer className="footer">
         <div className="container">
-          <span aria-label="Theme information">Built with React • Light theme accents</span>
+          <span aria-label="Theme information">Built with React</span>
         </div>
       </footer>
     </div>
