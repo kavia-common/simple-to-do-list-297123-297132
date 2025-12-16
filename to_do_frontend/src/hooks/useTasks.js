@@ -3,22 +3,21 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { tasksApi } from "../api/client";
 
 /**
+ * React hook to manage tasks from backend with loading/error states
+ * and optimistic updates (create/update/delete) with rollback on failure.
+ *
+ * Returns:
+ * - tasks: Array of task objects
+ * - loading: boolean
+ * - error: Error | null
+ * - listTasks: () => Promise<void>
+ * - createTask: (data) => Promise<task | null>
+ * - updateTask: (id, updates) => Promise<task | null>
+ * - deleteTask: (id) => Promise<boolean>
+ * - resetError: () => void
+ */
 // PUBLIC_INTERFACE
 export function useTasks(initialLoad = true) {
-  /**
-   * React hook to manage tasks from backend with loading/error states
-   * and optimistic updates (create/update/delete) with rollback on failure.
-   *
-   * Returns:
-   * - tasks: Array of task objects
-   * - loading: boolean
-   * - error: Error | null
-   * - listTasks: () => Promise<void>
-   * - createTask: (data) => Promise<task | null>
-   * - updateTask: (id, updates) => Promise<task | null>
-   * - deleteTask: (id) => Promise<boolean>
-   * - resetError: () => void
-   */
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(Boolean(initialLoad));
   const [error, setError] = useState(null);
